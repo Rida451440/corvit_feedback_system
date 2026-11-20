@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Submission Details - Corvit Feedback System</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+
+<header class="main-header">
+    <div class="header-container">
+        <a href="{{ url_for('home') }}" class="brand" aria-label="Corvit home">
+            <img src="{{ url_for('static', filename='logo.png') }}" alt="Corvit" class="brand-logo">
+            <span class="brand-text">Student Feedback System</span>
+        </a>
+
+        <div class="admin-header">
+            <span>Admin Panel</span>
+            <a href="{{ url_for('admin_logout') }}">Logout</a>
+        </div>
+    </div>
+</header>
+
+<main class="admin-page">
+
+    <div class="page-heading">
+        <div>
+            <h1>Submission Details</h1>
+            <p>Complete feedback submitted by the student.</p>
+        </div>
+
+        <a href="{{ url_for('student_submissions') }}" class="back-button">
+            Back to Submissions
+        </a>
+    </div>
+
+    <div class="student-detail-card">
+
+        <div class="detail-item">
+            <span>Student Name</span>
+            <strong>{{ submission.student_name }}</strong>
+        </div>
+
+        <div class="detail-item">
+            <span>Name of Instructor</span>
+            <strong>{{ submission.instructor_name or "—" }}</strong>
+        </div>
+
+        <div class="detail-item">
+            <span>Batch</span>
+            <strong>{{ submission.batch or "—" }}</strong>
+        </div>
+
+        <div class="detail-item">
+            <span>Course</span>
+            <strong>{{ submission.course_name }}</strong>
+        </div>
+
+        <div class="detail-item">
+            <span>Average Rating</span>
+            <strong>
+                {% if submission.avg_rating is not none %}
+                    {{ submission.avg_rating }}/4
+                {% else %}
+                    N/A
+                {% endif %}
+            </strong>
+        </div>
+
+        <div class="detail-item">
+            <span>Submitted At</span>
+            <strong>{{ submission.created_at }}</strong>
+        </div>
+
+    </div>
+
+    <div class="answers-card">
+
+        <h2>Student Answers</h2>
+
+        {% set current_section = namespace(name="") %}
+
+        {% for answer in answers %}
+
+            {% if answer.section != current_section.name %}
+
+                {% set current_section.name = answer.section %}
+
+                <div class="answer-section">
+                    <h3>{{ answer.section }}</h3>
+                </div>
+
+            {% endif %}
+
+            <div class="answer-row">
+
+                <div class="question-text">
+                    {{ loop.index }}. {{ answer.text }}
+                </div>
+
+                <div class="answer-highlight">
+
+                    {% if answer.q_type == "rating" %}
+
+                        {% if answer.answer == "4" %}
+                            <span class="rating-badge excellent">
+                                Excellent
+                            </span>
+
+                        {% elif answer.answer == "3" %}
+                            <span class="rating-badge good">
+                                Good
+                            </span>
+
+                        {% elif answer.answer == "2" %}
+                            <span class="rating-badge average">
+                                Average
+                            </span>
+
+                        {% elif answer.answer == "1" %}
+                            <span class="rating-badge very-poor">
+                                Below Average
+                            </span>
+
+                        {% else %}
+                            <span class="rating-badge">
+                                {{ answer.answer }}
+                            </span>
+                        {% endif %}
+
+                    {% elif answer.q_type == "yesno" %}
+
+                        {% if answer.answer|lower == "yes" %}
+                            <span class="rating-badge yes">
+                                YES
+                            </span>
+                        {% else %}
+                            <span class="rating-badge no">
+                                NO
+                            </span>
+                        {% endif %}
+
+                    {% else %}
+
+                        <span class="text-answer">
+                            {{ answer.answer or "—" }}
+                        </span>
+
+                    {% endif %}
+
+                </div>
+
+            </div>
+
+        {% endfor %}
+
+    </div>
+
+</main>
+
+<footer class="main-footer">
+    <p>© 2026 Corvit Institute of Information Technology</p>
+</footer>
+
+</body>
+</html>
+

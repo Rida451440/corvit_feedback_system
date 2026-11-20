@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>Student Feedback | Corvit</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='style.css') }}">
+
+</head>
+
+
+<body>
+
+<header class="top-header">
+
+    <div class="header-content">
+
+        <a href="{{ url_for('home') }}" class="brand" aria-label="Corvit home">
+            <img src="{{ url_for('static', filename='logo.png') }}" alt="Corvit" class="brand-logo">
+            <span class="brand-text">Student Feedback System</span>
+        </a>
+
+
+        <div class="header-text">
+
+            Student Portal
+
+        </div>
+
+    </div>
+
+</header>
+
+<main class="login-container">
+
+
+    <div class="login-card">
+
+
+        <div class="login-icon">
+            C
+        </div>
+
+
+        <h1>
+            Student Feedback
+        </h1>
+
+
+        <p class="login-description">
+
+            Please enter your information to provide
+            your valuable feedback.
+
+        </p>
+
+
+        {% if error %}
+        <div class="login-error">
+            {{ error }}
+        </div>
+        {% endif %}
+
+
+        <form action="/feedback"
+              method="POST">
+
+
+            <div class="form-group">
+
+                <label for="student_name">
+
+                    Student Name
+
+                </label>
+
+
+                <input
+                    type="text"
+                    id="student_name"
+                    name="student_name"
+                    value="{{ student_name or '' }}"
+                    placeholder="Enter your full name"
+                    required
+                >
+
+            </div>
+
+            <div class="form-group">
+
+                <label for="course_id">
+
+                    Select Your Course
+
+                </label>
+
+
+                <select
+                    id="course_id"
+                    name="course_id"
+                    required
+                >
+
+                    <option value="">
+
+                        Select your course
+
+                    </option>
+
+
+                    {% for course in courses %}
+
+                    <option value="{{ course.id }}" {% if selected_course == course.id|string %}selected{% endif %}>
+
+                        {{ course.name }}
+
+                    </option>
+
+                    {% endfor %}
+
+                </select>
+
+            </div>
+
+
+            <div class="form-group">
+
+                <label for="instructor_name">
+
+                    Name of Instructor
+
+                </label>
+
+
+                <input
+                    type="text"
+                    id="instructor_name"
+                    name="instructor_name"
+                    value="{{ instructor_name or '' }}"
+                    placeholder="Enter instructor name"
+                    required
+                >
+
+            </div>
+
+
+            <div class="form-group">
+
+                <label for="batch">
+
+                    Batch
+
+                </label>
+
+
+                <input
+                    type="text"
+                    id="batch"
+                    name="batch"
+                    value="{{ batch or '' }}"
+                    placeholder="e.g. Batch 2"
+                    required
+                >
+
+            </div>
+
+
+            <!-- BUTTON -->
+
+            <button
+                type="submit"
+                class="continue-button">
+
+                Continue to Feedback
+
+            </button>
+
+
+        </form>
+
+
+        <p class="privacy-note">
+
+            Your feedback will help improve the quality
+            of courses, facilities and services.
+
+        </p>
+
+
+    </div>
+
+
+</main>
+
+
+<footer>
+
+    © 2026 Corvit Institute of Information Technology
+
+</footer>
+
+
+</body>
+
+</html>

@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Student Feedback | Corvit</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='style.css') }}">
+</head>
+
+<body>
+
+<header class="top-header">
+
+    <div class="header-content">
+
+        <a href="{{ url_for('home') }}" class="brand" aria-label="Corvit home">
+            <img src="{{ url_for('static', filename='logo.png') }}" alt="Corvit" class="brand-logo">
+            <span class="brand-text">Student Feedback System</span>
+        </a>
+
+        <div class="header-text">
+            Student Portal
+        </div>
+
+    </div>
+
+</header>
+
+
+<main class="main-container">
+
+    <section class="student-card">
+
+        <div class="card-title">
+            Student Information
+        </div>
+
+        <div class="student-info-grid">
+
+            <div>
+                <span class="info-label">
+                    Student Name
+                </span>
+
+                <strong>
+                    {{ student_name }}
+                </strong>
+            </div>
+
+            <div>
+                <span class="info-label">
+                    Course
+                </span>
+
+                <strong>
+                    {{ course.name }}
+                </strong>
+            </div>
+
+            <div>
+                <span class="info-label">
+                    Name of Instructor
+                </span>
+
+                <strong>
+                    {{ instructor_name }}
+                </strong>
+            </div>
+
+            <div>
+                <span class="info-label">
+                    Batch
+                </span>
+
+                <strong>
+                    {{ batch }}
+                </strong>
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <form
+        action="{{ url_for('submit_feedback') }}"
+        method="POST"
+    >
+
+        <input
+            type="hidden"
+            name="student_name"
+            value="{{ student_name }}"
+        >
+
+        <input
+            type="hidden"
+            name="instructor_name"
+            value="{{ instructor_name }}"
+        >
+
+        <input
+            type="hidden"
+            name="batch"
+            value="{{ batch }}"
+        >
+
+        <input
+            type="hidden"
+            name="course_id"
+            value="{{ course.id }}"
+        >
+
+
+        {% set current_section = namespace(name="") %}
+        {% set question_number = namespace(value=0) %}
+        {% set section_number = namespace(value=0) %}
+
+
+        {% for question in questions %}
+
+            {% if question.section != current_section.name %}
+
+                {% if not loop.first %}
+                    </section>
+                {% endif %}
+
+                {% set current_section.name = question.section %}
+                {% set section_number.value = section_number.value + 1 %}
+
+                <section class="feedback-section">
+
+                    <div class="section-header">
+
+                        <div class="section-number">
+                            {{ section_number.value }}
+                        </div>
+
+                        <h2>
+                            {{ question.section }}
+                        </h2>
+
+                    </div>
+
+            {% endif %}
+
+
+            {% set question_number.value = question_number.value + 1 %}
+
+            <div class="question-row">
+
+                <div class="question-text">
+
+                    <span class="question-number">
+                        {{ question_number.value }}.
+                    </span>
+
+                    <span>
+                        {{ question.text }}
+                    </span>
+
+                </div>
+
+
+                {% if question.q_type == "rating" %}
+
+                    <div class="rating-area">
+
+                        <div class="rating-row">
+
+                            {% for value in range(4, 0, -1) %}
+
+                                <label class="rating-option">
+
+                                    <input
+                                        type="radio"
+                                        name="question_{{ question.id }}"
+                                        value="{{ value }}"
+                                        required
+                                    >
+
+                                    <span class="radio-circle"></span>
+
+                                </label>
+
+                            {% endfor %}
+
+                        </div>
+
+
+                        <div class="rating-labels">
+
+                            <span>
+                                Excellent
+                            </span>
+
+                            <span>
+                                Good
+                            </span>
+
+                            <span>
+                                Average
+                            </span>
+
+                            <span>
+                                Below Average
+                            </span>
+
+                        </div>
+
+                    </div>
+
+
+                {% elif question.q_type == "yesno" %}
+
+                    <div class="yesno-row">
+
+                        <label>
+
+                            <input
+                                type="radio"
+                                name="question_{{ question.id }}"
+                                value="Yes"
+                                required
+                            >
+
+                            Yes
+
+                        </label>
+
+
+                        <label>
+
+                            <input
+                                type="radio"
+                                name="question_{{ question.id }}"
+                                value="No"
+                                required
+                            >
+
+                            No
+
+                        </label>
+
+                    </div>
+
+
+                {% elif question.q_type == "text" %}
+
+                    <textarea
+                        name="question_{{ question.id }}"
+                        rows="4"
+                        placeholder="Write here (optional)..."
+                    ></textarea>
+
+                {% endif %}
+
+            </div>
+
+        {% endfor %}
+
+
+        {% if questions %}
+            </section>
+        {% endif %}
+
+
+        <div class="submit-area">
+
+            <p>
+                Please review your answers before submitting.
+            </p>
+
+            <button type="submit">
+                Submit Feedback
+            </button>
+
+        </div>
+
+    </form>
+
+</main>
+
+
+<footer>
+    © 2026 Corvit Institute of Information Technology
+</footer>
+
+
+</body>
+</html>
